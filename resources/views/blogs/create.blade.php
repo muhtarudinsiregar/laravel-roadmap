@@ -10,6 +10,7 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('blog.store') }}">
                         @csrf
+                        <input type="hidden" name="slug">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Title</label>
                             <input name="title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Write your title">

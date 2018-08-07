@@ -27,4 +27,9 @@ class Blog extends Model implements Transformable
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function setSlugAttribute()
+    {
+        $this->attributes['slug'] = str_slug($this->title);
+    }
 }
