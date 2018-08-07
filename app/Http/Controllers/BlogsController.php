@@ -11,6 +11,7 @@ use App\Http\Requests\BlogCreateRequest;
 use App\Http\Requests\BlogUpdateRequest;
 use App\Repositories\BlogRepository;
 use App\Validators\BlogValidator;
+use App\Http\Controllers\Traits\BlogTrait;
 
 /**
  * Class BlogsController.
@@ -19,6 +20,7 @@ use App\Validators\BlogValidator;
  */
 class BlogsController extends Controller
 {
+    use BlogTrait;
     /**
      * @var BlogRepository
      */
@@ -48,17 +50,13 @@ class BlogsController extends Controller
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $blogs = $this->repository->paginate();
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $blogs,
-            ]);
-        }
-
         return view('blogs.index', compact('blogs'));
+    }
+
+    public function create()
+    {
+        return view('blogs.create');
     }
 
     /**
@@ -73,11 +71,7 @@ class BlogsController extends Controller
     public function store(BlogCreateRequest $request)
     {
         try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
-            $blog = $this->repository->create($request->all());
-
+            $blog = $this->postBlog($request->all(), $request->user());
             $response = [
                 'message' => 'Blog created.',
                 'data' => $blog->toArray(),
